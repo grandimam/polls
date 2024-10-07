@@ -1,2 +1,0 @@
-# react
-Notes on React
