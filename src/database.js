@@ -1,6 +1,8 @@
 import { EntitySchema, DataSource } from "typeorm";
 
-export const User = new EntitySchema({
+let Connection = null;
+
+const User = new EntitySchema({
   name: 'User',
   tableName: 'users',
   columns: {
@@ -18,7 +20,7 @@ export const User = new EntitySchema({
   },
 })
 
-export const Post = new EntitySchema({
+const Post = new EntitySchema({
   name: 'Post',
   tableName: 'posts',
   columns: {
@@ -40,15 +42,21 @@ export const Post = new EntitySchema({
   },
 })
 
-export const DB = new DataSource({
-  type: 'postgres',
-  host: 'localhost',
-  port: 5432,
-  username: process.env.DB_USERNAME,
-  password: process.env.DB_PASSWORD,
-  database: 'your_db_name',
-  synchronize: true,
-  logging: false,
-  entities: [User, Post],
-})
 
+export async function getConnection() {
+  if (!Connection) {
+    Connection = new DataSource({
+      type: 'postgres',
+      host: 'localhost',
+      port: 5432,
+      username: 'test',
+      password: 'test',
+      database: 'test',
+      synchronize: true,
+      logging: false,
+      entities: [User, Post],
+    })
+  }
+  await Connection.initialize()
+  console.log('Database connection initialized')
+}
